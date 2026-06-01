@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { checkBadgeRateLimit, getBadgeClientIp } from '../src/lib/badge-rate-limit';
+import { checkBadgeRateLimit } from '../src/lib/badge-rate-limit';
+import { getClientIp } from '../src/lib/ip';
 import { NextRequest } from 'next/server';
 
 describe('badge-rate-limit', () => {
@@ -58,7 +59,7 @@ describe('badge-rate-limit', () => {
     });
   });
 
-  describe('getBadgeClientIp', () => {
+  describe('getClientIp', () => {
     it('verify x-forwarded-for header parsing', () => {
       const req = {
         headers: new Headers({
@@ -66,7 +67,7 @@ describe('badge-rate-limit', () => {
         })
       } as unknown as NextRequest;
       
-      expect(getBadgeClientIp(req)).toBe('192.168.1.1');
+      expect(getClientIp(req)).toBe('192.168.1.1');
     });
 
     it('verify x-real-ip header handling', () => {
@@ -76,7 +77,7 @@ describe('badge-rate-limit', () => {
         })
       } as unknown as NextRequest;
       
-      expect(getBadgeClientIp(req)).toBe('10.0.0.2');
+      expect(getClientIp(req)).toBe('10.0.0.2');
     });
 
     it('verify fallback to "unknown" when no IP available', () => {
@@ -84,7 +85,7 @@ describe('badge-rate-limit', () => {
         headers: new Headers()
       } as unknown as NextRequest;
       
-      expect(getBadgeClientIp(req)).toBe('unknown');
+      expect(getClientIp(req)).toBe('unknown');
     });
 
     it('verify req.ip is used if present', () => {
@@ -93,7 +94,7 @@ describe('badge-rate-limit', () => {
         headers: new Headers()
       } as unknown as NextRequest;
       
-      expect(getBadgeClientIp(req)).toBe('172.16.0.1');
+      expect(getClientIp(req)).toBe('172.16.0.1');
     });
   });
 });

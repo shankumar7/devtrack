@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { generateBadgeSVG } from "../badge-utils";
 import {
   checkBadgeRateLimit,
-  getBadgeClientIp,
 } from "@/lib/badge-rate-limit";
+import { getClientIp } from "@/lib/ip";
 import { logError } from "@/lib/error-handler";
 import { normalizeGitHubUsername } from "@/lib/validate-github-username";
 
@@ -57,7 +57,7 @@ async function fetchCommitsThisMonth(
 }
 
 export async function GET(req: NextRequest) {
-  const ip = getBadgeClientIp(req);
+  const ip = getClientIp(req);
   const rateLimit = checkBadgeRateLimit(ip);
 
   if (!rateLimit.allowed) {

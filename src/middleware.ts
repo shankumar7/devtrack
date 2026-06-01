@@ -37,13 +37,7 @@ type RateLimitResult = {
   reset: number;
 };
 
-function getIp(req: NextRequest) {
-  return (
-    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-    req.headers.get("x-real-ip") ??
-    "unknown"
-  );
-}
+import { getClientIp } from "@/lib/ip";
 
 function buildHeaders(result: RateLimitResult) {
   const headers = new Headers();
@@ -249,7 +243,7 @@ export async function middleware(req: NextRequest) {
   }
 
   const githubId = typeof token?.githubId === "string" ? token.githubId : null;
-  const identifier = githubId ? `user:${githubId}` : `ip:${getIp(req)}`;
+  const identifier = githubId ? `user:${githubId}` : `ip:${getClientIp(req)}`;
 
   const limit = githubId
     ? AUTHENTICATED_LIMIT

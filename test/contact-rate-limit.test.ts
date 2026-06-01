@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { checkContactRateLimit, getContactClientIp, contactBuckets } from "../src/lib/contact-rate-limit";
+import { checkContactRateLimit, contactBuckets } from "../src/lib/contact-rate-limit";
+import { getClientIp } from "../src/lib/ip";
 import { NextRequest } from "next/server";
 
 describe("contact-rate-limit", () => {
@@ -85,7 +86,7 @@ describe("contact-rate-limit", () => {
     });
   });
 
-  describe("getContactClientIp", () => {
+  describe("getClientIp", () => {
     it("verify x-forwarded-for header parsing", () => {
       const req = {
         headers: new Headers({
@@ -93,7 +94,7 @@ describe("contact-rate-limit", () => {
         }),
       } as unknown as NextRequest;
 
-      expect(getContactClientIp(req)).toBe("192.168.1.1");
+      expect(getClientIp(req)).toBe("192.168.1.1");
     });
 
     it("verify x-real-ip header handling", () => {
@@ -103,7 +104,7 @@ describe("contact-rate-limit", () => {
         }),
       } as unknown as NextRequest;
 
-      expect(getContactClientIp(req)).toBe("10.0.0.2");
+      expect(getClientIp(req)).toBe("10.0.0.2");
     });
 
     it("verify fallback to 'unknown' when no IP available", () => {
@@ -111,7 +112,7 @@ describe("contact-rate-limit", () => {
         headers: new Headers(),
       } as unknown as NextRequest;
 
-      expect(getContactClientIp(req)).toBe("unknown");
+      expect(getClientIp(req)).toBe("unknown");
     });
 
     it("verify req.ip is used if present", () => {
@@ -120,7 +121,7 @@ describe("contact-rate-limit", () => {
         headers: new Headers(),
       } as unknown as NextRequest;
 
-      expect(getContactClientIp(req)).toBe("172.16.0.1");
+      expect(getClientIp(req)).toBe("172.16.0.1");
     });
   });
 });

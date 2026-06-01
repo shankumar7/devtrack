@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { checkContactRateLimit, getContactClientIp } from "@/lib/contact-rate-limit";
+import { checkContactRateLimit } from "@/lib/contact-rate-limit";
+import { getClientIp } from "@/lib/ip";
 
 export const dynamic = "force-dynamic";
 
@@ -35,7 +36,7 @@ export async function POST(request: NextRequest) {
   }
 
   // In-route rate limiting check (3 requests per IP per hour)
-  const ip = getContactClientIp(request);
+  const ip = getClientIp(request);
   const rateLimitResult = checkContactRateLimit(ip);
 
   if (!rateLimitResult.allowed) {
